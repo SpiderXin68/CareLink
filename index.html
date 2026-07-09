@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>康邻 CareLink - 社区智慧健康闭环平台</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./vendor/lucide.min.js"></script>
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="主导航">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">CL</div>
+          <div>
+            <p class="brand-eyebrow">康邻</p>
+            <h1>CareLink</h1>
+          </div>
+        </div>
+
+        <nav class="nav-list">
+          <button class="nav-item is-active" type="button" data-view-target="command">
+            <i data-lucide="layout-dashboard"></i><span>社区指挥台</span>
+          </button>
+          <button class="nav-item" type="button" data-view-target="doctor">
+            <i data-lucide="stethoscope"></i><span>医生工作台</span>
+          </button>
+          <button class="nav-item" type="button" data-view-target="resident">
+            <i data-lucide="heart-pulse"></i><span>居民端</span>
+          </button>
+          <button class="nav-item" type="button" data-view-target="family">
+            <i data-lucide="users"></i><span>家属端</span>
+          </button>
+          <button class="nav-item" type="button" data-view-target="nursing">
+            <i data-lucide="clipboard-check"></i><span>护理端</span>
+          </button>
+          <button class="nav-item" type="button" data-view-target="devices">
+            <i data-lucide="watch"></i><span>设备接入</span>
+          </button>
+          <button class="nav-item" type="button" data-view-target="engine">
+            <i data-lucide="cpu"></i><span>AI 风险引擎</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-panel">
+          <p>试点社区</p>
+          <strong>青禾街道 · 望康社区</strong>
+          <span>1 个社区卫生服务中心 / 3 名家庭医生 / 486 名居民</span>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="section-kicker">一老一慢一社区</p>
+            <h2 id="viewTitle">社区指挥台</h2>
+          </div>
+          <div class="topbar-actions">
+            <div class="live-badge">
+              <span class="pulse-dot"></span>
+              <span id="clockText">实时演示</span>
+            </div>
+            <button class="icon-button" type="button" id="simulateBtn" aria-label="模拟采集">
+              <i data-lucide="activity"></i>
+              <span>模拟采集</span>
+            </button>
+            <button class="icon-button primary" type="button" id="taskBtn" aria-label="生成随访单">
+              <i data-lucide="list-checks"></i>
+              <span>生成随访单</span>
+            </button>
+          </div>
+        </header>
+
+        <section class="view is-active" data-view="command" aria-labelledby="commandTitle">
+          <div class="view-heading">
+            <div>
+              <p class="section-kicker">社区健康态势</p>
+              <h3 id="commandTitle">从监测到干预的闭环总览</h3>
+            </div>
+            <div class="risk-legend" aria-label="风险等级说明">
+              <span><b class="dot green"></b>正常</span>
+              <span><b class="dot yellow"></b>关注</span>
+              <span><b class="dot orange"></b>随访</span>
+              <span><b class="dot red"></b>干预</span>
+            </div>
+          </div>
+
+          <div class="metric-grid" id="metricGrid"></div>
+
+          <div class="dashboard-grid">
+            <section class="panel map-panel">
+              <div class="panel-header">
+                <div>
+                  <p class="section-kicker">数字孪生健康地图</p>
+                  <h4>楼栋风险热力</h4>
+                </div>
+                <span class="panel-tag">脱敏到楼栋</span>
+              </div>
+              <div class="community-map" id="communityMap" aria-label="社区楼栋风险地图"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="section-kicker">今日异常事件</p>
+                  <h4>优先处理队列</h4>
+                </div>
+                <span class="panel-tag" id="queueCount">0 项</span>
+              </div>
+              <div class="alert-list" id="alertList"></div>
+            </section>
+          </div>
+
+          <section class="panel loop-panel">
+            <div class="panel-header">
+              <div>
+                <p class="section-kicker">业务闭环</p>
+                <h4>异常发生后的责任链路</h4>
+              </div>
+              <span class="panel-tag">预防 · 监测 · 干预 · 康复</span>
+            </div>
+            <div class="loop-steps" id="loopSteps"></div>
+          </section>
+        </section>
+
+        <section class="view" data-view="doctor" aria-labelledby="doctorTitle">
+          <div class="view-heading">
+            <div>
+              <p class="section-kicker">家庭医生工作台</p>
+              <h3 id="doctorTitle">AI 辅助分层，医生负责干预</h3>
+            </div>
+            <div class="segmented" role="group" aria-label="患者筛选">
+              <button type="button" class="segment is-active" data-filter="all">全部</button>
+              <button type="button" class="segment" data-filter="red">红色</button>
+              <button type="button" class="segment" data-filter="orange">橙色</button>
+              <button type="button" class="segment" data-filter="yellow">黄色</button>
+            </div>
+          </div>
+
+          <div class="doctor-grid">
+            <aside class="patient-list panel" id="patientList" aria-label="居民列表"></aside>
+            <section class="panel case-panel" id="casePanel"></section>
+            <section class="panel task-panel">
+              <div class="panel-header">
+                <div>
+                  <p class="section-kicker">随访任务</p>
+                  <h4>今日待办</h4>
+                </div>
+                <span class="panel-tag" id="taskSummary">0 待处理</span>
+              </div>
+              <div class="task-list" id="taskList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" data-view="resident" aria-labelledby="residentTitle">
+          <div class="view-heading">
+            <div>
+              <p class="section-kicker">老人模式</p>
+              <h3 id="residentTitle">今天是否安全，一眼看清</h3>
+            </div>
+            <button class="icon-button danger" type="button" id="helpBtn">
+              <i data-lucide="phone-call"></i>
+              <span>一键求助</span>
+            </button>
+          </div>
+
+          <div class="resident-grid">
+            <section class="resident-status panel" id="residentStatus"></section>
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="section-kicker">今日事项</p>
+                  <h4>服药与复测</h4>
+                </div>
+                <span class="panel-tag">大字模式</span>
+              </div>
+              <div class="large-actions" id="largeActions"></div>
+            </section>
+            <section class="panel vitals-panel">
+              <div class="panel-header">
+                <div>
+                  <p class="section-kicker">健康趋势</p>
+                  <h4>最近 7 次测量</h4>
+                </div>
+              </div>
+              <div id="vitalCards" class="vital-cards"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" data-view="family" aria-labelledby="familyTitle">
+          <div class="view-heading">
+            <div>
+              <p class="section-kicker">子女看护小程序</p>
+              <h3 id="familyTitle">授权下的远程关怀</h3>
+            </div>
+            <button class="icon-button" type="button" id="voiceBtn">
+              <i data-lucide="mic"></i>
+              <span>语音问候</span>
+            </button>
+          </div>
+
+          <div class="family-grid">
+            <section class="panel family-summary" id="familySummary"></section>
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="section-kicker">关怀时间线</p>
+                  <h4>家属协同记录</h4>
+                </div>
+              </div>
+              <div class="timeline" id="familyTimeline"></div>
+            </section>
+            <section class="panel consent-panel">
+              <div class="panel-header">
+                <div>
+                  <p class="section-kicker">隐私授权</p>
+                  <h4>最小必要、可撤回</h4>
+                </div>
+              </div>
+              <div class="permission-list" id="permissionList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" data-view="nursing" aria-labelledby="nursingTitle">
+          <div class="view-heading">
+            <div>
+              <p class="section-kicker">上门护理服务</p>
+              <h3 id="nursingTitle">把线上风险转成线下服务</h3>
+            </div>
+            <button class="icon-button primary" type="button" id="routeBtn">
+              <i data-lucide="route"></i>
+              <span>优化路线</span>
+            </button>
+          </div>
+
+          <div class="nursing-grid">
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="section-kicker">今日上门</p>
+                  <h4>护理员任务</h4>
+                </div>
+              </div>
+              <div class="visit-list" id="visitList"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="section-kicker">上门记录</p>
+                  <h4>结构化采集</h4>
+                </div>
+              </div>
+              <form class="service-form" id="serviceForm">
+                <label>
+                  <span>测量血压</span>
+                  <input type="text" value="152/94 mmHg" />
+                </label>
+                <label>
+                  <span>餐食情况</span>
+                  <select>
+                    <option>正常进食</option>
+                    <option>食欲下降</option>
+                    <option>需营养干预</option>
+                  </select>
+                </label>
+                <label>
+                  <span>居住环境</span>
+                  <select>
+                    <option>安全</option>
+                    <option>地面湿滑</option>
+                    <option>需适老化改造</option>
+                  </select>
+                </label>
+                <button class="icon-button primary full" type="submit">
+                  <i data-lucide="send"></i>
+                  <span>提交给社区医生</span>
+                </button>
+              </form>
+            </section>
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="section-kicker">拍照清单</p>
+                  <h4>药盒、饮食、环境</h4>
+                </div>
+              </div>
+              <div class="photo-grid" id="photoGrid"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" data-view="devices" aria-labelledby="devicesTitle">
+          <div class="view-heading">
+            <div>
+              <p class="section-kicker">Huawei Health Kit</p>
+              <h3 id="devicesTitle">华为手表运动健康数据接入</h3>
+            </div>
+            <div class="topbar-actions">
+              <button class="icon-button" type="button" id="huaweiSyncBtn">
+                <i data-lucide="refresh-cw"></i>
+                <span>读取真实数据</span>
+              </button>
+              <button class="icon-button primary" type="button" id="huaweiConnectBtn">
+                <i data-lucide="link"></i>
+                <span>模拟授权接入</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="devices-grid">
+            <section class="panel device-hero" id="deviceStatus"></section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="section-kicker">可同步指标</p>
+                  <h4>手表到健康档案</h4>
+                </div>
+                <span class="panel-tag">用户授权后读取</span>
+              </div>
+              <div class="device-metrics" id="deviceMetrics"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="section-kicker">接入链路</p>
+                  <h4>从穿戴设备到风险引擎</h4>
+                </div>
+              </div>
+              <div class="device-flow" id="huaweiFlow"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="section-kicker">数据映射</p>
+                  <h4>CareLink 统一字段</h4>
+                </div>
+              </div>
+              <pre class="payload-box" id="huaweiPayload"></pre>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="section-kicker">落地要求</p>
+                  <h4>上线前必须完成</h4>
+                </div>
+              </div>
+              <div class="source-list" id="sourceList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" data-view="engine" aria-labelledby="engineTitle">
+          <div class="view-heading">
+            <div>
+              <p class="section-kicker">AI 风险引擎</p>
+              <h3 id="engineTitle">不做诊断，做基层医疗分诊助手</h3>
+            </div>
+            <span class="compliance-badge">健康管理建议 · 医生最终确认</span>
+          </div>
+
+          <div class="engine-grid">
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="section-kicker">模型输入</p>
+                  <h4>连续居家数据</h4>
+                </div>
+              </div>
+              <div class="input-stack" id="engineInputs"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="section-kicker">分层输出</p>
+                  <h4>风险与服务优先级</h4>
+                </div>
+              </div>
+              <div class="risk-output" id="riskOutput"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="section-kicker">合规边界</p>
+                  <h4>数据安全与医疗责任</h4>
+                </div>
+              </div>
+              <div class="compliance-list" id="complianceList"></div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
