@@ -1,0 +1,23 @@
+# Local runtime data
+data/huawei-health-live.json
+
+# Generated QA screenshots
+qa/
+
+# Android local signing material
+android-bridge/keystore/
+*.jks
+*.keystore
+
+# Android build outputs
+android-bridge/.gradle/
+android-bridge/build/
+android-bridge/app/build/
+
+# Local IDE files
+.idea/
+.vscode/
+
+# OS files
+Thumbs.db
+.DS_Store
