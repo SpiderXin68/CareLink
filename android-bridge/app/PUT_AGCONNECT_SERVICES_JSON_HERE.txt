@@ -1,0 +1,4 @@
+﻿把华为后台下载的 agconnect-services.json 放到这个目录。
+
+目标路径：
+C:\Users\SpiderXin\Desktop\Codex\CareLink\android-bridge\app\agconnect-services.json
